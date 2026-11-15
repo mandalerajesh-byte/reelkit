@@ -13,6 +13,8 @@ Auto captions (Hindi, Marathi, English + 90 more languages) and silence cutting.
 
 </div>
 
+<p align="center"><a href="docs/demo.mp4"><b>▶ Watch the 14-second demo</b></a> (Hindi speech → silence cut → highlighted captions, one command)</p>
+
 > Paid tools charge ₹500–2000/month for this. ReelKit does it on your own laptop, for free.
 
 ## ✨ Features
@@ -67,6 +69,7 @@ reelkit auto video.mp4 --fonts-dir ./fonts --font "Noto Sans Devanagari"
 
 ## 💡 Tips
 
+- **Hindi/Marathi accuracy:** ReelKit automatically uses the `medium` model for Indian languages (the small model mishears words). For the best result use `--model large-v3`. In our test it transcribed a Hindi clip almost perfectly, and `--prompt "रील किट, कैप्शन"` fixes tricky spellings and brand names.
 - Not accurate enough? Use `--model medium` or `--model large-v3` and set `--lang`.
 - Cutting too aggressively? Lower `--threshold` (e.g. `-45`) or raise `--min-silence`.
 - Have a GPU? It's used automatically, which is much faster.

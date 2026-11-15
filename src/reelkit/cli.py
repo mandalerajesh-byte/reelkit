@@ -16,7 +16,7 @@ def _out(path: str, suffix: str, ext: str | None = None) -> str:
 
 
 def _add_caption_opts(p: argparse.ArgumentParser) -> None:
-    p.add_argument("--model", default="small", help="Whisper size: tiny, base, small, medium, large-v3 (default: small)")
+    p.add_argument("--model", default=None, help="Whisper size: tiny, base, small, medium, large-v3 (default: small, or medium for Hindi/Marathi)")
     p.add_argument("--lang", default=None, help="Language code, e.g. hi, mr, en. Default: auto-detect")
     p.add_argument("--prompt", default=None, help="Hint text to improve accuracy (names, Hinglish style, jargon)")
     p.add_argument("--words", type=int, default=3, help="Words shown at once (default: 3)")
@@ -64,7 +64,7 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("srt", help="Only export a subtitle (.srt) file")
     s.add_argument("video")
     s.add_argument("-o", "--output")
-    s.add_argument("--model", default="small")
+    s.add_argument("--model", default=None)
     s.add_argument("--lang", default=None)
     s.add_argument("--prompt", default=None)
     return ap
@@ -97,8 +97,18 @@ def _caption(src: str, dst: str, args, want_srt: bool) -> None:
         print(f"Saved {srt_path}")
 
 
+# Indic languages need a bigger model to be accurate (tested: small mishears Hindi words).
+INDIC = {"hi", "mr", "bn", "ta", "te", "gu", "kn", "ml", "pa", "ur"}
+
+
+def _resolve_model(args) -> None:
+    if getattr(args, "model", None) is None:
+        args.model = "medium" if getattr(args, "lang", None) in INDIC else "small"
+
+
 def run(args) -> None:
     require_ffmpeg()
+    _resolve_model(args)
     if not os.path.isfile(args.video):
         raise ReelKitError(f"File not found: {args.video}")
 
